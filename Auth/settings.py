@@ -14,7 +14,6 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -264,5 +263,6 @@ LOGGING = {
 
 # Custom Settings
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:8000')
 VERIFICATION_CODE_EXPIRE_MINUTES = 1440  # 24 hours
 PASSWORD_RESET_TIMEOUT = 3600  # 1 hour
