@@ -15,7 +15,7 @@ def send_verification_email(user, verification_code):
     )
 
 def send_password_reset_email(user, reset_token):
-    reset_url = f"{settings.BACKEND_URL}/api/v1/password-reset-confirm/?token={reset_token}"
+    reset_url = f"{settings.FRONTEND_URL}/reset-password/{reset_token}"
     subject = 'Reset your password'
     message = f'Click the link to reset your password: {reset_url}'
     send_mail(

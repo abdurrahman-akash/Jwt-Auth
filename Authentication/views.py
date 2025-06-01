@@ -10,7 +10,12 @@ from drf_yasg import openapi
 from django.conf import settings
 
 from .serializers import (
-    RegisterSerializer, LoginSerializer, UserSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer, BaseSerializer
+    RegisterSerializer, 
+    LoginSerializer, 
+    UserSerializer, 
+    PasswordResetSerializer, 
+    PasswordResetConfirmSerializer, 
+    BaseSerializer,
 )
 from .models import CustomUser
 from Auth.base import NewAPIView
@@ -67,7 +72,6 @@ class LoginView(NewAPIView):
     permission_classes = [AllowAny]
     serializer_class = LoginSerializer
 
-    @swagger_auto_schema(request_body=LoginSerializer, responses={200: openapi.Response('Login response')})
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -80,6 +84,16 @@ class LoginView(NewAPIView):
                 return Response({'error': 'Invalid credentials'}, status=400)
             if not user.email_verified:
                 return Response({'error': 'Please verify your email before logging in.'}, status=403)
+            if not user.email_verified:
+                # Generate new verification code and expiry
+                user.verification_code = uuid.uuid4().hex
+                user.verification_code_expiry = timezone.now() + timedelta(minutes=30)
+                user.save()
+                send_verification_email(user, user.verification_code)
+                return Response(
+                    {'error': 'Please verify your email. A new verification link has been sent.'},
+                    status=403
+                )
             # If using JWT, generate token here
             return Response({
                 'uuid': str(user.id),
